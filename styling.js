@@ -12,7 +12,7 @@ var toastID    = 0;
 var toastsList = {};
 var bonusID    = 0;
 
-/** Menu state */
+/* Menu state */
 var menuState = {
     dialog:    false,
     character: false,
@@ -20,7 +20,6 @@ var menuState = {
     cosmetic:  false,
     keybinds:  false,
     prestige:  false,
-    // inventory: false,
     tips:      false,
     credits:   false,
 }
@@ -58,7 +57,6 @@ const cosmList = {
     carl:       dom('carl_cosmetics'),
 }
 const prestigeMenu =  dom('prestige_menu');
-// const inventoryMenu = dom('inventory_menu');
 const tipsMenu =      dom('tips_menu');
 //#endregion
 
@@ -72,7 +70,7 @@ const confettiColors =  ['red', 'blue', 'cyan', 'purple', 'yellow'];
 const ccGold =          ['goldenrod', 'yellow', 'white', '#e1cfa4', '#dcb276', '#be7e4e'];
 const ccWhite =         ['white'];
 const ccCarrot =        ['#ed9645', '#c3580d', '#de5a01', '#974810'];
-/** Confetti effect at mouse position
+/* Confetti effect at mouse position
  * @param {array} particles Array [0] is the minimum amount of particles, [1] is the maximum.
  * @param {array} colorArray Array to pull random colors from
  * @param {number} time Particle lifespan in milliseconds. Will also effect the travel distance of the particles.
@@ -118,7 +116,7 @@ function mouseConfetti(particles=[5,5], colorArray=confettiColors, time=150, siz
     }
 }
 
-/** Screen shake */
+/* Screen shake */
 // function screenShake(time=800, intensity=1) {
 //     $('body').classList.add('screen_shake');
 //     clearTimeout(shakeTimeout);
@@ -145,7 +143,7 @@ function buttonSound() {
     if(settings.enableSounds) playSound('click.flac');
 }
 
-/** Popup Dialog
+/* Popup Dialog
  * @param {string} title Dialog title
  * @param {string} desc Dialog description
  * @param {string} buttonName Name for the accept button
@@ -164,7 +162,7 @@ function openDialog(title, desc, buttonName, buttonStyle, button_action) {
     elDialog.buttons.accept.focus();
 }
 
-/** Close all popup menus
+/* Close all popup menus
  * @param {boolean} accept Whether or not to run the dialog accept function 
  * @returns 
  */
@@ -202,7 +200,7 @@ function closeDialog(accept=false) {
 }
 
 
-/** Toast notifications
+/* Toast notifications
  * @param {string}   title Title
  * @param {string}   desc Description
  * @param {string}   color Toast style
@@ -295,7 +293,7 @@ function toast(
     if(!persistent) setTimeout(() => { closeToast(id); }, settings.notificationLength * 1000);
     return id; // Return toast id
     
-    /** Disable tutorial toasts */
+    /* Disable tutorial toasts */
     function disableTutorials(toastID) {
         settings.tutorial_messages = false;
         dom('tutorial_messages').checked = false;
@@ -305,7 +303,7 @@ function toast(
     }
 }
 
-/** Close Toast Notification
+/* Close Toast Notification
  * @param {number} id ID of the toast you want to close
  * @param {boolean} animate Whether or not to play a dismiss animation
  */
@@ -327,7 +325,7 @@ function closeToast(id, animate = true) {
     delete toastsList[id];
 }
 
-/** Clear all toasts
+/* Clear all toasts
  * @param {boolean} force Forces a clear even if some toasts cannot be closed normally
  */
 function clearToasts(force = false) {
@@ -356,7 +354,7 @@ const infoTab         = dom("stats-panel-button");
 const achievementsTab = dom("achievements-panel-button");
 const settingsTab     = dom("settings-panel-button");
 
-/** Change Tripane panel
+/* Change Tripane panel
  * @param {string} to Name of the tripane panel to switch to
  * @param {boolean} noSound True prevents the button sound from playing
  * @returns 
@@ -395,7 +393,7 @@ function panelChange(to) {
 //#endregion
 
 
-/** Click number popup
+/* Click number popup
  * @param {boolean} useMousePos 
  * @param {string} amount 
  * @param {string} style Styling to be applied
@@ -450,13 +448,13 @@ function popupHandler(useMousePos = true, amount, style = 'carrot') {
 
 
 /* ----- Fancy Theme Switcher ----- */
-/** Opens the theme menu */
+/* Opens the theme menu */
 function themeSwitcher() {
     openMenu('theme');
     newIndicator(false, 'theme');
     populateThemeList();
 }
-/** Closes the theme menu */
+/* Closes the theme menu */
 function closeThemeSwitcher(noOverlay = false) {
     themeMenu.classList.remove('visible');
     if(!noOverlay) overlay.classList.remove("visible"); 
@@ -464,7 +462,7 @@ function closeThemeSwitcher(noOverlay = false) {
 
 /* ----- Fancy Cosmetic Switcher ----- */
 var uncollapseNeeded = false;
-/** Opens the cosmetic menu */
+/* Opens the cosmetic menu */
 function cosmeticSwitcher(category = false) {
     if(!characterQuery('carl')) return;
     openMenu('cosmetic');
@@ -489,7 +487,7 @@ function cosmeticSwitcher(category = false) {
 
     populateCosmeticsList();
 }
-/** Closes the cosmetic menu */
+/* Closes the cosmetic menu */
 function closeCosmeticSwitcher(noOverlay = false) {
     cosmeticMenu.classList.remove('visible');
     if(!noOverlay) overlay.classList.remove("visible");
@@ -511,20 +509,12 @@ function openMenu(id) {
     buttonSound();
 }
 
-/** Opens the prestige menu */
+/* Opens the prestige menu */
 function openPrestigeMenu() {
     if(!player.prestige_available) return; // Prevent from opening if unavailable
     openMenu('prestige');
     updatePrestigeMenu();
 }
-
-/* ----- Inventory ----- */
-// function openInventory() {
-//     openMenu('inventory');
-//     menuState.inventory = true;
-//     overlay.classList.add("visible");
-//     elBody.classList.add('overflow_hidden');
-// }
 
 /* ----- Tips Menu ----- */
 function openTipsMenu() {
@@ -558,19 +548,7 @@ function populateTipsMenu() {
     elTipsList.innerHTML = html;
 }
 
-/** Toggles hardmode, replace with save file menu perhaps */
-function openDifficultyMenu() {
-    if(player.flags['hardcore'] !== true) {
-        player.flags['hardcore'] = true;
-        toast('Hardmode enabled', '', 'error', false, true);
-    } else {
-        player.flags['hardcore'] = false;
-        toast('Hardmode disabled', '', '', false, true);
-    }
-    updateMainIcon();
-}
-
-/** Change cosmetics
+/* Change cosmetics
  * @param {string} target Cosmetic type
  * @param {string} to Cosmetic name
  * @param {boolean} resetState 
@@ -622,10 +600,10 @@ function setCosmetic(target, to, resetState = false) {
     // Update page
     cosmeticSwitcherCheckmark(target, to, from);
 
-    /** Set farmable name */
+    /* Set farmable name */
     function nameLoop(farmable) { document.querySelectorAll('.farmable_name').forEach(e => { e.innerText = farmable + 's'; }); }
 
-    /** Theme switcher checkmarks */
+    /* Theme switcher checkmarks */
     function cosmeticSwitcherCheckmark(target, to, from = false) {
         var cm_to = dom(`${target}_cosmetic_${to}_checkmark`);
         let cm_from = dom(`${target}_cosmetic_${from}_checkmark`);
@@ -705,7 +683,7 @@ cosmeticsView.addEventListener('input', () => {
     cosmeticsGridMode();
 });
 
-/**  */
+/*  */
 function cosmeticsGridMode() {
     let value = cosmeticsView.value;
     let elements = document.querySelectorAll('.cosmetics_mini');
@@ -716,7 +694,7 @@ function cosmeticsGridMode() {
     saveSettings();
 }
 
-/** Populate cosmetics list
+/* Populate cosmetics list
  * @param {string} target Cosmetic type to populate, or "all" for all
  */
 function populateCosmeticsList(target='all') {
@@ -802,7 +780,7 @@ function populateCosmeticsList(target='all') {
 const elAchievementsList = dom('achievements_list');
 const elAchievementFilter = dom('achievement_filter');
 
-/** Populate achievements list
+/* Populate achievements list
  * @param {string} specific Accepts an achievement key and updates only that achievement instead
  */
 function populateAchievements(specific=false) {
@@ -921,7 +899,7 @@ function populateAchievements(specific=false) {
         </div>
         `;
 
-        /** Achievement reward HTML */
+        /* Achievement reward HTML */
         function rewardHTML(reward, unlocked) {
             let [rewardType, rewardName] =
             typeof reward === 'string' || reward instanceof String ? reward.split(':') : ['function', reward];
@@ -999,7 +977,7 @@ function achieveGridAdjust() {
     });
 }
 
-/** Achievement progress */
+/* Achievement progress */
 function achievementProgress(element = dom('achievement_progress')) {
     let unlockedAchievements = Object.keys(player.achievements);
     eInnerText(
@@ -1014,7 +992,7 @@ elAchievementFilter.addEventListener('change', () => {
     populateAchievements();
 });
 
-/** Set theme
+/* Set theme
  * @param {string} theme Theme to switch to
  */
 function setTheme(theme) {
@@ -1031,7 +1009,7 @@ function setTheme(theme) {
     saveSettings(); 
 
     themeSwitcherCheckmark(theme, from);
-    /** Theme switcher checkmarks */
+    /* Theme switcher checkmarks */
     function themeSwitcherCheckmark(theme, from = false) {
         var elTheme = dom(`${theme}_checkmark`);
 
@@ -1048,7 +1026,7 @@ function setTheme(theme) {
 
 
 
-/** Opens character info screen */
+/* Opens character info screen */
 function characterInfo(character='bill', state=undefined) {
     if(characterQuery(character) !== true) return toast('This feature isn\'t available yet.', 'Progress through the game to unlock this.', undefined, false, true);
     let charbox = dom(`${character}_box`);
@@ -1066,7 +1044,7 @@ function characterInfo(character='bill', state=undefined) {
 // Credits scroll
 const elCredits = dom('credits');
 var creditInterval;
-/** Opens the credits with autoscroll */
+/* Opens the credits with autoscroll */
 function startCredits(toast = false) {
     if(toast) closeToast(toast);
     openMenu('credits');
@@ -1085,7 +1063,7 @@ elCredits.addEventListener('wheel', () => { clearInterval(creditInterval); });
 const elKeybindsMenu = dom('keybinds_menu');
 const elKeybindsBlurb = dom('keybinds_blurb');
 let keyBlurbText = elKeybindsBlurb.innerHTML;
-/** Opens the keybind menu */
+/* Opens the keybind menu */
 function keybindsMenu() {
     openMenu('keybinds');
     let checked = elEnableKeybinds.checked;
@@ -1094,7 +1072,7 @@ function keybindsMenu() {
 }
 
 const carlShop = dom('carl_shop');
-/** Populate Carl's shop */
+/* Populate Carl's shop */
 function populateCarl() {
     let html = '';
     carlShopData = {};
@@ -1135,7 +1113,7 @@ function populateCarl() {
     cashCount(false);
     updateCarlsShop();
 
-    /** Carl HTML template */
+    /* Carl HTML template */
     function carlHTML(internalName, type, name, img, price, desc) {
         return `
         <div class="tooltip_area">
@@ -1157,7 +1135,7 @@ function populateCarl() {
 }
 
 
-/** Populate Jared's shop */
+/* Populate Jared's shop */
 function populateJared(specific=false) {
     if(characterQuery('jared') !== true) return;
 
@@ -1192,7 +1170,7 @@ function populateJared(specific=false) {
     
     cashCount(false);
 
-    /** Jared HTML template */
+    /* Jared HTML template */
     function jaredHTML(key) {
         let item = jaredShop[key];
         let data = Jared.data?.[key];
@@ -1231,7 +1209,7 @@ function populateJared(specific=false) {
 }
 
 
-/** Theme/cosmetic NEW indicator
+/* Theme/cosmetic NEW indicator
  * @param {boolean} state Add or remove NEW indicator
  * @param {string} type Accepts "theme" or "cosmetic"
  */
@@ -1248,11 +1226,11 @@ function newIndicator(state, type) {
     }
 }
 
-/** Enable/disable compact achievement CSS */
+/* Enable/disable compact achievement CSS */
 function achieveCompactMode(state) {
     style(elAchievementsList, 'compact', state);
 }
-/** Enable/disable achievement grid CSS */
+/* Enable/disable achievement grid CSS */
 function achieveGridMode(state) {
     style(elAchievementsList, 'achieve_grid', state);
     achieveGridAdjust();

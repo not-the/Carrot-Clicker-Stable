@@ -260,12 +260,6 @@ document.addEventListener('keyup', event => {
         event.preventDefault();
         clearToasts(false);
     }
-    
-    // Settings and prestige
-    else if((key=="Backspace" || key=="Delete") && isDebug()) {
-        event.preventDefault();
-        openDialog(...dialog.clearsave);
-    }
 
     // Menus
     else if(key === settings.keybinds['key_tips_menu'])         openTipsMenu();
@@ -721,8 +715,6 @@ function resetKeybinds() {
 }
 
 var hashlist;
-/** Returns true if game is in debug or developer mode */
-function isDebug() { if(hashlist.includes('dev') || player.flags['debug']) return true; }
 
 // URL hashes
 (() => {
@@ -735,265 +727,6 @@ function isDebug() { if(hashlist.includes('dev') || player.flags['debug']) retur
             elEnableSounds.checked = false;
             settingSounds(false);
         }
-        // Dev tools
-        if(isDebug()) {
-            player.flags['cookies_accepted'] = true; // Auto-accept cookie notice
-            seeButton('hardmode'); // Feature in development
-
-            // Register cheat functions globally
-            //#region
-            window.allCharacters = () => {
-                for(let ci = 0; ci < chars.length; ci++) unlock('character', chars[ci], true);
-                toast('', 'Devtools: All Characters now available');
-                populateJared();
-            }
-            window.allAchievements = () => {
-                for(let i = 0; i < achievementsKeys.length; i++) grantAchievement(achievementsKeys[i]);
-                toast('', 'Devtools: All Achievements now unlocked');
-            }
-            window.allThemes = () => {
-                for(let i = 0; i < themesKeys.length; i++) unlock('theme', themesKeys[i]);
-                toast('', 'Devtools: All Themes now available');
-            }
-            window.allCosmetics = () => {
-                for(let t = 0; t < cosmeticsKeys.length; t++) {
-                    let key = cosmeticsKeys[t];
-                    let target = cosmetics[key];
-
-                    // Loop through cosmetics
-                    for(let c = 0; c < target['keys'].length; c++) unlock('cosmetic', target.keys[c], key);
-                }
-                toast('', 'Devtools: All Cosmetics now available');
-            }
-            window.allTrinkets = () => {
-                unlock('character', 'jared', true);
-                let keys = jaredShop.keys;
-                for(i = 0; i < keys.length; i++) {
-                    let key = keys[i];
-                    let item = jaredShop[key];
-                    let data = Jared.data?.[key];
-                    if(data === undefined) continue;
-                    let prices = item.price;
-                    data.level = prices.length;
-                    data.value = item.value[data.level];
-                }
-                populateJared();
-                toast('', 'Devtools: All Trinkets now maxed');
-            }
-            window.allTips = () => {
-                player.flags['all_tips'] = true;
-                populateTipsMenu();
-                toast('', 'Devtools: All Tips now visible');
-            }
-            window.allPrestige = () => {
-                let l = player.lifetime.prestige_count
-                l = l === 0 ? 1 : l;
-                player.prestige_available = true;
-                seeButton('prestige');
-                showPrestigeStats()
-            }
-            window.allUnlocks = () => {
-                allCharacters();
-                allAchievements();
-                allThemes();
-                allCosmetics();
-                allTrinkets();
-                allTips();
-            }
-            window.updateValues = event => {
-                // Carrots
-                let cc = parseInt(setCarrotsEl.value);
-                player.carrots          = 0;
-                player.lifetime.carrots = 0;
-                player.prestige.carrots = 0;
-                earnCarrots(cc);
-                // Cash
-                if(setCashEl.value !== '') {
-                    let coinc = parseInt(setCashEl.value);
-                    player.cash          = 0;
-                    player.lifetime.cash = 0;
-                    earnCash(coinc);
-                }
-                // Golden carrots
-                if(setGoldenCarrotsEl.value !== '') {
-                    let gcc = parseInt(setGoldenCarrotsEl.value);
-                    player.golden_carrots = gcc
-                    updateGC();
-                    updateCharlesShop();
-                }
-
-                // Levels
-                for(li = 0; li < levelable.length; li++) {
-                    let character = levelable[li];
-                    let nick = character.nickname;
-                    let v = parseInt(elCharacterLevel[nick].value.split(',').join(''));
-                    if(typeof v === "number" && !Number.isNaN(v) && v <= 500 && v >= 0) {
-                        character.lvl = v;
-                    } else toast('Invalid level', 'Must be a number, and must be no more than 500', 'error');
-                }
-                recalculateCarrotsPer();
-                characterPrices();
-                characterButtons();
-                updateAllTools();
-            }
-            //#endregion
-            
-            // Register savedata functions globally
-            //#region 
-            window.importSave = () => {
-                let imported = dom('import_export').value;
-                // Textarea is empty
-                if(imported === '') return toast('Savedata manager', 'Please input exported savedata', '', false, true);
-                imported = imported.split('//+//');
-                try {
-                    for(let i = 0; i < saveListKeys.length; i++) {
-                        let key = saveListKeys[i];
-                        let obj_import = JSON.parse(imported[i]);
-                        saveList[key] = obj_import;
-                    }
-                    saveGame();
-                    setTimeout(() => { location.reload(); }, 50); // Reload after a delay
-                } catch (error) {
-                    console.error(error);
-                    toast('Import error', error, 'error');
-                }
-            }
-            window.exportSave = () => {
-                let exported = '';
-                for(let i = 0; i < saveListKeys.length; i++) {
-                    let key = saveListKeys[i];
-                    let obj = saveList[key];
-                    exported += JSON.stringify(obj);
-                    if(i === saveListKeys.length - 1) break;
-                    exported += '//+//';
-                }
-                dom('import_export').value = exported;
-            }
-            window.optionDebugUpdate = () => {
-                player.flags.debug_dont_autoupdate = !(dom('debug_dont_autoupdate').checked);
-                toast('Flag set', `\ndebug_dont_autoupdate = ${player.flags.debug_dont_autoupdate}`, '', false, true);
-            }
-            //#endregion
-
-            // Put dev panel in settings
-            $('#devp').innerHTML = /* html */
-            `<div style="">
-                <div class="footer_bottom brown_darker_color">
-                    <style type="text/css">
-                        #devp > div { width: 100%; max-width: 550px; float: right; margin-top: -96px; }
-                        #devp > div > div { display: block; padding: 12px 20px; margin-left: 32px; }
-                        .unlock_buttons { width: 100%; max-width: 400px; }
-                        .unlock_buttons button { width: 100%; margin-right: 4px; }
-                        @media only screen and (max-width: 1200px) {
-                            #devp > div { width: 100%; max-width: unset; float: unset; margin: 0; }
-                            #devp > div > div { display: block; padding: 12px 20px; margin-left: 0; margin-bottom: 24px; }
-                        }
-                    </style>
-
-                    <b style="font-size: 18pt; color: rgb(255, 161, 53)">Dev Tools</b><br>
-                    <button onclick="clearSave()" class="button_red">Quick Reset</button>
-
-                    <h4>Unlock all</h4>
-                    <div class="unlock_buttons">
-                        <div class="flex">
-                            <button onclick="allUnlocks()">Everything</button>
-                            <button onclick="allCharacters()">Characters</button>
-                            <button onclick="allAchievements()">Achievements</button>
-                        </div>
-                        <div class="flex">
-                            <button onclick="allThemes()">Themes</button>
-                            <button onclick="allCosmetics()">Cosmetics</button>
-                            <button onclick="allTrinkets()">Trinkets</button>
-                        </div>
-                        <div class="flex">
-                            <button onclick="allTips()">Tips</button>
-                            <button onclick="allPrestige()">Show prestige</button>
-                        </div>
-                    </div>
-                    
-                    <h4>Set Values</h4>
-                    <table>
-                        <tr>
-                            <td>
-                                <label for="setCarrot">Carrots:</label>
-                            </td>
-                            <td>
-                                <input id="setCarrot" class="dev_input" type="number" value="500000">
-                            </td>
-                            <td id="setCarrotRounded" class="secondary_text"></td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                <label for="setGoldenCarrot">Golden Carrots:</label>
-                            </td>
-                            <td>
-                                <input id="setGoldenCarrot" class="dev_input" type="number">
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                <label for="setCash">Coins:</label>
-                            </td>
-                            <td>
-                                <input id="setCash" class="dev_input" type="number" value="9999">
-                            </td>
-                        </tr>
-                    </table>
-                    <button onclick="updateValues()">Update Values</button>
-                    
-                    <h4>Save data management</h4>
-                    <label for="debug_dont_autoupdate">
-                    <input type="checkbox" name="debug_dont_autoupdate" id="debug_dont_autoupdate" ${!player.flags.debug_dont_autoupdate || player.flags.debug_dont_autoupdate === undefined ? 'checked' : ''}
-                    onclick="optionDebugUpdate()">
-                        Auto-update save while in debug mode
-                    </label><br/>
-                    <textarea name="import_export" id="import_export" cols="40" rows="3" style="max-width: 100%; min-width: 100%;" onclick="this.focus();this.select()"></textarea><br/>
-                    <button onclick="exportSave()" style="width: 159px;">🠹 Export</button>
-                    <button onclick="importSave()" style="width: 159px;">🠻 Import</button>
-                </div>
-            </div>`;
-
-            window.setCarrotsEl       = dom("setCarrot");
-            window.setGoldenCarrotsEl = dom("setGoldenCarrot");
-            window.setCashEl          = dom("setCash");
-            window.elSetCarrotRounded = dom('setCarrotRounded')
-
-            // Enter key updates values
-            document.querySelectorAll('.dev_input').forEach(element => {
-                element.disabled = false;
-                element.addEventListener('keyup', e => {
-                    if(e.key === 'Escape' || e.key === 'Enter') document.activeElement.blur();
-                    if(e.key === 'Enter') updateValues();
-                });
-            });
-
-            // DisplayRounded preview
-            setCarrotsEl.addEventListener('input', () => {
-                if(setCarrotsEl.value === '') return;
-                elSetCarrotRounded.innerText = `(${DisplayRounded(setCarrotsEl.value)})`;
-            });
-        }
-        // Disable Annoying Notifications
-        if(hashlist.includes('dan')) {
-            player.flags['no_achievement_toasts'] = true;
-            dom('tutorial_messages').checked = false;
-            setting('tutorial_messages', false);
-            dom('carl_shop_toasts').checked = false;
-            setting('carl_shop_toasts', false);
-        } else player.flags['no_achievement_toasts'] = false;
-
-        // Console to toast
-        if(hashlist.includes('log')) {
-            window.clog = console.log;
-            console.log = (...args) => { clog(args); toast('', '☰ ' + Array.prototype.slice.call(args).join(', ')); }
-            window.cwarn = console.warn;
-            console.warn = (...args) => { cwarn(args); toast('', '⚠ ' + Array.prototype.slice.call(args).join(', ')); }
-            window.cerror = console.error;
-            console.error = (...args) => { cerror(args); toast('', '⛔ ' + Array.prototype.slice.call(args).join(', ')); }
-        } else if(typeof clog === 'function') [console.log, console.warn, console.error] = [clog, cwarn, cerror];
-
         // Update page
         updateMainIcon();
     }
@@ -1070,7 +803,7 @@ function isDebug() { if(hashlist.includes('dev') || player.flags['debug']) retur
         Default_Jared.data,
     ];
     //#endregion
-    if(default_player.data_version > player.data_version || isDebug() && !player.flags.debug_dont_autoupdate) {
+    if(default_player.data_version > player.data_version) {
         try {
             // Loop through onu_templates array
             //#region 
@@ -1115,13 +848,6 @@ function isDebug() { if(hashlist.includes('dev') || player.flags['debug']) retur
                 player.pages = pagesIntended;
             }
             //#endregion
-
-    
-            // Done
-            console.log(`Player object has been updated (Version ${player.data_version} -> ${default_player.data_version})`);
-            if(isDebug() && player.data_version !== default_player.data_version) {
-                toast('', `Player object has been updated (Version ${player.data_version} -> ${default_player.data_version})`, '', true);
-            }
 
             player.data_version = default_player.data_version;
             saveGame();

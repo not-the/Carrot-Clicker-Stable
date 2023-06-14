@@ -1808,7 +1808,7 @@ var internalAchievements = 0;
 
 // External achievement checks
 //#region 
-/** All tips (basic_tips, all_tips) */
+/* All tips (basic_tips, all_tips) */
 function ex_allTips() {
     let tally = 0;
     for(i = 0; i < tl.length; i++) {
@@ -1820,7 +1820,7 @@ function ex_allTips() {
     return tally;
 }
 
-/** Get total cosmetics count */
+/* Get total cosmetics count */
 function playerCosmeticsCount() {
     let a = 0;
     for(i = 0; i < cosmeticsKeys.length; i++) a += player.cosmetics[cosmeticsKeys[i]].length - 1;
