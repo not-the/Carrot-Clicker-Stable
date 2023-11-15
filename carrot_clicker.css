@@ -2482,6 +2482,39 @@ footer .user_card { text-decoration: none !important; }
 
 
 
+/* Advertisement */
+ins.adsbygoogle {
+    width: 100%;
+    /* max-width: 900px; */
+    /* margin: 3px auto; */
+    background-color: var(--bg-darker);
+    position: relative;
+}
+/* ins.adsbygoogle > .toast_close {
+    position: absolute;
+    top: -24px;
+    font-size: 18pt;
+    text-decoration: none;
+} */
+/* ins.adsbygoogle.ad_floating {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform:translateX(-50%);
+    z-index: 1001;
+} */
+ins.adsbygoogle::after {
+    position: absolute;
+    right:0;bottom:0;left:0;
+    content: "Advertisement";
+    text-align: center;
+    color: var(--secondary-text);
+    padding-bottom: 24px;
+}
+
+
+
+
 
 /* Media queries */
 /* Minimum supported width: 362px */
