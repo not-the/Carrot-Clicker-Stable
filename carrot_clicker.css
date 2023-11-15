@@ -2503,14 +2503,14 @@ ins.adsbygoogle {
     transform:translateX(-50%);
     z-index: 1001;
 } */
-ins.adsbygoogle::after {
+/* ins.adsbygoogle::after {
     position: absolute;
     right:0;bottom:0;left:0;
     content: "Advertisement";
     text-align: center;
     color: var(--secondary-text);
     padding-bottom: 24px;
-}
+} */
 
 
 
