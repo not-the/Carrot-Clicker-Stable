@@ -20,7 +20,10 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://carrot.notkal.com/" />
     <meta property="og:image" content="https://carrot.notkal.com/assets/Carrot%20Clicker.png" />
-    <meta property="og:description" content="Click the carrot, Bill. Carrot Clicker is an exponential growth clicker game where clicking is always incentivised." />
+
+    <!-- Description -->
+    <meta name="description" content="Carrot Clicker is an exponential growth clicker game where clicking is always incentivised">
+    <meta property="og:description" content="Carrot Clicker is an exponential growth clicker game where clicking is always incentivised" />
 
     <!-- Javascript -->
     <script src="carrot_utilities.js" defer></script>
@@ -134,7 +137,6 @@
                                 <img src="./assets/icons/external.svg" alt="(External)" class="dropdown_img right_img">
                             </div>
                         </a>
-
                     </nav>
                 </div>
             </div>
@@ -195,6 +197,10 @@
                         <div class="mini_item" id="list_cash" data-tooltip="While clicking the carrot there is a chance that coins will drop instead of carrots. Make sure to grab them!">
                             <span class="mini_name">Coins</span><span class="mini_number"><span class="color_cash">⚬</span> <span id="cash_count">...</span></span>
                         </div>
+                        <!-- Stamps -->
+                        <!-- <div class="mini_item" id="list_stamps" data-tooltip="placeholder">
+                            <span class="mini_name">Stamps:</span><span id="stamp_count" class="mini_number">...</span>
+                        </div> -->
                     </div>
 
 
@@ -206,9 +212,17 @@
                     <button onClick="openPrestigeMenu()" class="main_button_item" id="prestige_menu_button" data-tooltip="???" disabled>
                         <img src="./assets/icons/question_mark.svg" alt="Prestige" class="main_button_img" id="prestige_menu_button_img">
                     </button>
+                    <!-- Inventory button -->
+                    <!-- <button onClick="openInventory()" data-tooltip="Inventory" class="main_button_item" id="inventory_button">
+                        <img src="./assets/icons/backpack.svg" alt="Inventory" class="main_button_img" id="inventory_button_img">
+                    </button> -->
                     <!-- Tips button -->
                     <button onClick="openTipsMenu()" data-tooltip="Tips" class="main_button_item" id="tips_menu_button">
                         <img src="./assets/icons/lightbulb.svg" alt="Tips" class="main_button_img" id="tips_button_img">
+                    </button>
+                    <!-- Hardmode button -->
+                    <button onClick="openDifficultyMenu()" data-tooltip="Hardmode" class="main_button_item button_red hidden position_absolute" id="difficulty_menu_button">
+                        <img src="./assets/icons/medal.png" alt="Hardmode" class="main_button_img" id="tips_button_img">
                     </button>
                     <!-- Share -->
                     <!-- <script>
@@ -247,7 +261,11 @@
                         </div>
 
                         <!-- Active boosts -->
-                        <div id="boosts" class="flex"></div>
+                        <div id="boosts" class="flex">
+                            <!-- <div class="power_item" id="boost_0">
+                                <img src="./assets/pixel_carrot_32x.png" alt=""><span id="time_boost_0">-:--</span>
+                            </div> -->
+                        </div>
 
                         <!-- None active -->
                         <div id="no_powers" class="power_item" style="width: 100%; background: none; box-shadow: none; padding-left: 0">
@@ -677,7 +695,7 @@
             </section>
         </div>
 
-        
+
         <!-- Advertisement -->
         <div class="center_ad">
             <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1407840358707118"
@@ -801,6 +819,8 @@
 
                         <!-- Lifetime -->
                         <h3>Lifetime:</h3>
+                        <p>Time played: <b id="stat_time_played">---</b></p><br/>
+
                         <details class="stat_collapse">
                             <summary><img src="./assets/stats/carrot.png" alt="" class="stats_icon button_icon"> Carrots earned: <b id="lifetime_carrots">---</b></summary>
                             <p>From clicking: <b id="lifetime_carrots_clicked">---</b></p>
@@ -1036,7 +1056,7 @@
                 <div>
                     <img src="./assets/theme/pixel_carrot.png" alt="Carrot Clicker" title="Carrot Clicker" class="footer_carrot" onclick="eggUp()" tabindex="0" role="button">
                     <h1 style="margin-top: 8px;">Carrot Clicker</h1>
-                    <p id="footer_version">Version Beta v1.17.2 (Revision 1)</p>
+                    <p id="footer_version">Version Beta v1.17.4</p>
                 </div>
 
                 <!-- Columns -->
@@ -1058,7 +1078,8 @@
                                 </div>
                             </a>
                         </div>
-                        <button onclick="startCredits()" style="width: 100%; max-width: 240px; margin-top: 8px;">View Credits</button>
+                        <button onclick="startCredits()" style="width: 100%; max-width: 240px; margin-top: 8px;">View Credits</button><br/>
+                        © All rights reserved
                     </div>
 
                     <!-- Links -->
@@ -1487,11 +1508,11 @@
             <!-- Next prestige -->
             <p class="prestigetooltip center" style="padding-top: 6px;">
                 <!-- Charles button -->
-                <button onClick="characterInfo('charles')" class="full_width" title="Prestige">
+                <button onClick="characterInfo('charles')" class="full_width">
                     Buy tomes
                 </button><br/>
                 <!-- Prestige button -->
-                <button onClick="openDialog(...dialog.prestige_confirm)" class="button_gold full_width" title="Prestige" style="height: 40px;">
+                <button onClick="openDialog(...dialog.prestige_confirm)" class="button_gold full_width" style="height: 40px;">
                     Prestige
                 </button><br/>
                 Prestiging now will result in:<br/>
@@ -1622,7 +1643,8 @@
             <div>
                 <h1>Carrot Clicker</h1>
                 <p class="secondary_text">
-                    Carrot Clicker Project 2021 - 2022
+                    Carrot Clicker Project 2021 - 2023
+                    © All rights reserved
                 </p>
                 <button onclick="closeDialog()" style="width: 180px; margin-top: 24px;">Done</button>
                 <!-- <img src="./assets/theme/pixel_carrot.png" alt="Carrot Clicker" class="footer_carrot"> -->
